@@ -33,6 +33,8 @@ namespace TEst
             var wa = new WindowApi();
             var window = wa.WindowFromPoint(new Point(1000, 500));
             wa.BringToFront(window);
+            var frontWindow = wa.GetForegroundWindow();
+            Expect(window.Ptr, Is.EqualTo(frontWindow.Ptr));
         }
     }
 }

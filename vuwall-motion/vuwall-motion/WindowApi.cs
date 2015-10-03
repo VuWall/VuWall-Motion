@@ -28,6 +28,14 @@ namespace vuwall_motion
             _SetForegroundWindow(window.Ptr);
         }
 
+        public Window GetForegroundWindow()
+        {
+            var ptr = _GetForegroundWindow();
+            Rectangle rect;
+            _GetWindowRect(ptr, out rect);
+            return new Window(ptr, rect);
+        }
+
         [DllImport("user32.dll", EntryPoint = "WindowFromPoint")]
         public static extern IntPtr _WindowFromPoint(Point point);
 
@@ -39,5 +47,8 @@ namespace vuwall_motion
 
         [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
         public static extern IntPtr _SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", EntryPoint = "GetForegroundWindow")]
+        public static extern IntPtr _GetForegroundWindow();
     }
 }
