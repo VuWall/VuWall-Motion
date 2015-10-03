@@ -80,7 +80,17 @@ namespace vuwall_motion {
             Invalidate();
         }
 
-        // TODO: Delete Blob/rect
+        public void DeleteBlob(Rectangle blob)
+        {
+            blobs.Remove(blob);
+            Invalidate();
+        }
+
+        public void DeleteRect(Rectangle rect)
+        {
+            rectangles.Remove(rect);
+            Invalidate();
+        }
 
         // TODO: Method to get an event from MYO to get x & y positions, used to invalidate
 
