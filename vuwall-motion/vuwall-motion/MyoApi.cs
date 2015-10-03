@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Exceptions;
@@ -18,6 +19,7 @@ namespace vuwall_motion
         public void Connect<T>(Func<T> process)
         {
             PoseChanged += (sender, args) => { };
+            PoseSequenceDetected += (sender, args) => { };
             using (var channel = Channel.Create(
                ChannelDriver.Create(ChannelBridge.Create(),
                MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create()))))
