@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MyoSharp.Communication;
@@ -19,22 +20,42 @@ namespace vuwall_motion
         [STAThread]
         static void Main()
         {
+            Point? absolute = null;
+
             using (var channel = Channel.Create(ChannelDriver.Create(ChannelBridge.Create(), MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create()))))
             {
                 using (var hub = Hub.Create(channel))
                 {
                     hub.MyoConnected += (sender, e) =>
                     {
+                        e.Myo.Unlock(UnlockType.Hold);
+                        e.Myo.Unlock(UnlockType.Timed);
                         e.Myo.GyroscopeDataAcquired += (o, args) =>
                         {
                             var myo = (Myo)o;
-
-                            var position = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
-                            Console.WriteLine(position);
-                            if (position.X > 0 && position.X <= 1920 && position.Y > 0 && position.Y <= 1080)
+                            if (absolute == null)
                             {
-                                Cursor.Position = position;
+                                absolute = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
                             }
+                            var position = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
+                            position.Offset(0 - absolute.Value.X, 0 - absolute.Value.Y);
+                            if (position.X < 0)
+                            {
+                                position.X = 0;
+                            }
+                            else if (position.X > 1920)
+                            {
+                                position.X = 1920;
+                            }
+                            if (position.Y < 0)
+                            {
+                                position.Y = 0;
+                            }
+                            else if (position.Y > 1080)
+                            {
+                                position.Y = 1080;
+                            }
+                            Cursor.Position = position;
                             
                         };
                         e.Myo.PoseChanged += (o, args) =>
