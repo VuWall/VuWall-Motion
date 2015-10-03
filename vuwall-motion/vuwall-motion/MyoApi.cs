@@ -12,6 +12,7 @@ namespace vuwall_motion
         public bool IsConnected { get; private set; }
         public IPoseSequence sendToBack { get; private set; }
         public IPoseSequence bringToFront { get; private set; }
+        public IHeldPose holdPose { get; private set; }
         public bool SendToBack { get; private set; }
         public static event EventHandler PoseChanged;
         public static event EventHandler PoseSequenceDetected;
@@ -27,19 +28,30 @@ namespace vuwall_motion
             {
                 hub.MyoConnected += (sender, e) =>
                 {
-                    this.IsConnected = true;
+                    // Startup Connection 
+                    IsConnected = true;
                     Console.WriteLine("Myo {0} has connected!", e.Myo.Handle);
                     e.Myo.Vibrate(VibrationType.Short);
+                    e.Myo.Unlock(UnlockType.Hold);
+
+                    // Hold Poses
+                    holdPose = HeldPose.Create(e.Myo, Pose.Fist);
+                    holdPose.Interval = TimeSpan.FromSeconds(0.5);
+                    holdPose.Start();
+
+                    // Sequences
                     sendToBack = PoseSequence.Create(e.Myo, Pose.WaveOut, Pose.WaveOut);
                     bringToFront = PoseSequence.Create(e.Myo, Pose.WaveIn, Pose.WaveIn);
 
+                    // Event Listeners
                     sendToBack.PoseSequenceCompleted += Myo_Sequence;
                     bringToFront.PoseSequenceCompleted += Myo_Sequence;
+                    holdPose.Triggered += Myo_HoldPose;
                     e.Myo.PoseChanged += Myo_PoseChanged;
                     e.Myo.Locked += Myo_Locked;
                     e.Myo.Unlocked += Myo_Unlocked;
                 };
-                
+
                 hub.MyoDisconnected += (sender, e) =>
                 {
                     this.IsConnected = false;
@@ -47,11 +59,12 @@ namespace vuwall_motion
 
                     sendToBack.PoseSequenceCompleted -= Myo_Sequence;
                     bringToFront.PoseSequenceCompleted -= Myo_Sequence;
+                    holdPose.Triggered -= Myo_HoldPose;
                     e.Myo.PoseChanged -= Myo_PoseChanged;
                     e.Myo.Locked -= Myo_Locked;
                     e.Myo.Unlocked -= Myo_Unlocked;
                 };
-                
+
                 channel.StartListening();
                 process();
             }
@@ -73,6 +86,13 @@ namespace vuwall_motion
             e.Myo.Unlock(UnlockType.Hold);
         }
 
+        private void Myo_HoldPose(object sender, PoseEventArgs e)
+        {
+            Console.WriteLine("{0} arm Myo is holding pose {1}!", e.Myo.Arm, e.Pose);
+            //e.Myo.Unlock(UnlockType.Timed);
+            //e.Myo.Unlock(UnlockType.Hold);
+        }
+
         private void Myo_Unlocked(object sender, MyoEventArgs e)
         {
             Console.WriteLine("{0} arm Myo has unlocked!", e.Myo.Arm);
@@ -84,5 +104,6 @@ namespace vuwall_motion
             e.Myo.Unlock(UnlockType.Timed);
             e.Myo.Unlock(UnlockType.Hold);
         }
+
     }
 }
