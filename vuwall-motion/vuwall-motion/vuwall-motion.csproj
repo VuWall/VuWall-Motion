@@ -49,6 +49,8 @@
     <Compile Include="TransparentForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Window.cs" />
+    <Compile Include="WindowApi.cs" />
     <Compile Include="TransparentForm.Designer.cs">
       <DependentUpon>TransparentForm.cs</DependentUpon>
     </Compile>
@@ -77,6 +79,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyoSharp\MyoSharp.csproj">
+      <Project>{b075c7e9-fe48-4508-b44c-1a259bcc8b22}</Project>
+      <Name>MyoSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
