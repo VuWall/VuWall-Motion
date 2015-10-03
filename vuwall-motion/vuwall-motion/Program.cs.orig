@@ -3,17 +3,24 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+<<<<<<< HEAD
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Discovery;
 using MyoSharp.Exceptions;
 using MyoSharp.Math;
+=======
+using MyoSharp.Device;
+>>>>>>> origin/master
 using MyoSharp.Poses;
 
 namespace vuwall_motion {
     static class Program {
         private static void Main()
         {
+<<<<<<< HEAD
+            
+=======
             var Myo = new MyoApi();
             var form = new TransparentForm();
             Myo.Connect(() =>
@@ -21,6 +28,7 @@ namespace vuwall_motion {
                 Application.Run(form);
                 return false;
             });
+>>>>>>> origin/master
         }
     }
 }
