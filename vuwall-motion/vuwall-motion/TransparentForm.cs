@@ -12,8 +12,6 @@ namespace vuwall_motion {
     public partial class TransparentForm : Form {
         public TransparentForm() {
             InitializeComponent();
-            Opacity = 1;
-            WindowState = FormWindowState.Maximized;
         }
 
         private void TransparentForm_Load(object sender, EventArgs e) {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace vuwall_motion {
     partial class TransparentForm {
@@ -6,10 +7,6 @@ namespace vuwall_motion {
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
-        public void Show(object p) {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// Clean up any resources being used.
@@ -35,12 +32,13 @@ namespace vuwall_motion {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 273);
+            var clientRes = Screen.PrimaryScreen.Bounds;
+            this.ClientSize = clientRes.Size;
             this.Name = "TransparentForm";
             this.Text = "TransparentForm";
             this.Load += new System.EventHandler(this.TransparentForm_Load);
             this.ResumeLayout(false);
-
+            this.FormBorderStyle = FormBorderStyle.None;
         }
 
         #endregion
