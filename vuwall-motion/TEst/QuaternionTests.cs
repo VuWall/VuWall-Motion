@@ -62,6 +62,32 @@ namespace TEst
         }
 
         [TestCase]
+        public void PointTopLeftFromLeft()
+        {
+            Point position = new Point(-960, 0);
+            float distFromScreen = 50f;
+            Vector3F vec = new Vector3F(0, 1080, 100);
+            var ratio = (distFromScreen/vec.Z);
+            var screenX = ratio * vec.X + position.X;
+            var screenY = ratio * vec.Y + position.Y;
+            Expect(screenX, Is.EqualTo(-960));
+            Expect(screenY, Is.EqualTo(540));
+        }
+
+        [TestCase]
+        public void PointCenterFromBottomRight()
+        {
+            Point position = new Point(960, -540);
+            float distFromScreen = 300f;
+            Vector3F vec = new Vector3F(-320, 180, 100);
+            var ratio = (distFromScreen / vec.Z);
+            var screenX = ratio * vec.X + position.X;
+            var screenY = ratio * vec.Y + position.Y;
+            Expect(screenX, Is.EqualTo(0));
+            Expect(screenY, Is.EqualTo(0));
+        }
+
+        [TestCase]
         public void MoveLeft()
         {
             QuaternionF thing = new QuaternionF(0, 1, 2, 3);
