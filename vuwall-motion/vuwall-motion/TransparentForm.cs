@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace vuwall_motion {
     public partial class TransparentForm : Form {
         private Pen pen = new Pen(Color.Red, 5);
+        public List<Rectangle> blobs = new List<Rectangle>();
+        public List<Rectangle> rectangles = new List<Rectangle>(); 
 
         public TransparentForm() {
             InitializeComponent();
@@ -23,20 +26,33 @@ namespace vuwall_motion {
         }
 
         private void TransparentForm_Paint(object sender, PaintEventArgs e) {
-            e.Graphics.DrawEllipse(pen, 250, 250, 20, 20);
+            foreach (var blob in blobs)
+            {
+                e.Graphics.DrawEllipse(pen, blob);
+            }
+
+            foreach (var rect in rectangles)
+            {
+                e.Graphics.DrawRectangle(pen, rect);
+            }
         }
 
         private void TransparentForm_MouseClick(object sender, EventArgs e)
         {
             Point local = this.PointToClient(Cursor.Position);
-            drawRect(new Rectangle(local.X,local.Y,500,500));
+            AddRectangle(new Rectangle(local.X, local.Y, 500,500 ));
         }
 
-        public void drawRect(Rectangle rect)
+        public void AddBlob(Rectangle blob)
         {
-            Graphics g = this.CreateGraphics();
-            g.DrawRectangle(pen, rect);
-            g.Dispose();
+            blobs.Add(blob);
+            Invalidate();
+        }
+
+        public void AddRectangle(Rectangle rect)
+        {
+            rectangles.Add(rect);
+            Invalidate();
         }
 
         // TODO: Method to get an event from MYO to get x & y positions, used to invalidate
