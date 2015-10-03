@@ -16,9 +16,15 @@ namespace Test
         private MyoApi myo;
 
         [TestFixtureSetUp]
-        public void Initialize()
+        public void SetUp()
         {
             myo = new MyoApi();
+        }
+
+        [TestFixtureTearDown]
+        public void TearDown()
+        {
+            
         }
 
         [Test]
@@ -117,6 +123,50 @@ namespace Test
             myo.Connect(() =>
             {
                 Thread.Sleep(5000);
+                return false;
+            });
+
+            Assert.That(wasCalled, Is.True);
+        }
+
+        [Test]
+        public void TestBringToFrontPose()
+        {
+            var wasCalled = false;
+            MyoApi.PoseSequenceDetected += (sender, e) =>
+            {
+                var poses = ((PoseSequence) sender)._sequence.ToArray();
+                if (poses.Intersect(new[]{ Pose.WaveIn, Pose.WaveIn}).Count() == poses.Length)
+                {
+                    wasCalled = true;
+                }
+            };
+
+            myo.Connect(() =>
+            {
+                Thread.Sleep(10000);
+                return false;
+            });
+
+            Assert.That(wasCalled, Is.True);
+        }
+
+        [Test]
+        public void TestSendToBackPose()
+        {
+            var wasCalled = false;
+            MyoApi.PoseSequenceDetected += (sender, e) =>
+            {
+                var poses = ((PoseSequence)sender)._sequence.ToArray();
+                if (poses.Intersect(new[] { Pose.WaveOut, Pose.WaveOut }).Count() == poses.Length)
+                {
+                    wasCalled = true;
+                }
+            };
+
+            myo.Connect(() =>
+            {
+                Thread.Sleep(10000);
                 return false;
             });
 

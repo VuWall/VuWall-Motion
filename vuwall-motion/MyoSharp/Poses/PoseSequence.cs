@@ -13,8 +13,8 @@ namespace MyoSharp.Poses
     public class PoseSequence : IPoseSequence
     {
         #region Fields
-        private readonly List<Pose> _sequence;
-        private readonly List<Pose> _currentSequence;
+        public List<Pose> _sequence { get; private set; }
+        public List<Pose> _currentSequence { get; private set; }
         private readonly IMyoEventGenerator _myo;
 
         private bool _disposed;
