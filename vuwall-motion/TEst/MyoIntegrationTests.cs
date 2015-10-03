@@ -9,6 +9,7 @@ using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Discovery;
 using MyoSharp.Exceptions;
+using MyoSharp.Poses;
 using NUnit.Framework;
 
 namespace TEst
@@ -16,6 +17,7 @@ namespace TEst
     [TestFixture]
     internal class MyoIntegrationTests
     {
+
         [TestCase]
         public void DiscoverMyoListener()
         {
@@ -30,6 +32,24 @@ namespace TEst
         {   
             var exception = Assert.Throws<ArgumentNullException>(() => DeviceListener.Create(null));
             Assert.That(exception.ParamName, Is.EqualTo("channelListener"));     
+        }
+
+        [TestCase]
+        public void DiscoverNullMyoPose()
+        {
+            var gesture = Pose.Fist;
+
+            var exception = Assert.Throws<ArgumentNullException>(() => HeldPose.Create(null, gesture));
+            Assert.That(exception.ParamName, Is.EqualTo("myo"));
+        }
+
+        [TestCase]
+        public void DiscoverNoMyoPose()
+        {
+            var myo = new Mock<IMyoEventGenerator>(MockBehavior.Strict);
+
+            var exception = Assert.Throws<ArgumentException>(() => HeldPose.Create(myo.Object));
+            Assert.That(exception.ParamName, Is.EqualTo("targetPoses"));
         }
     }
 }
