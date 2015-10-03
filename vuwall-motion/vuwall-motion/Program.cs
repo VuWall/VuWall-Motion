@@ -14,7 +14,9 @@ namespace vuwall_motion
         [STAThread]
         static void Main()
         {
+            var Myo = new MyoApi();
 
+            Myo.Connect(()=> MessageBox.Show("Running!"));
         }
     }
 }
