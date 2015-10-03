@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Exceptions;
+using MyoSharp.Poses;
 
 namespace vuwall_motion
 {
     public class MyoApi
     {
         public bool IsConnected { get; private set; }
+        public static event EventHandler PoseChanged;
 
         public void Connect<T>(Func<T> process)
         {
@@ -25,6 +27,7 @@ namespace vuwall_motion
                     this.IsConnected = true;
                     Console.WriteLine("Myo {0} has connected!", e.Myo.Handle);
                     e.Myo.Vibrate(VibrationType.Short);
+
                     e.Myo.PoseChanged += Myo_PoseChanged;
                     e.Myo.Locked += Myo_Locked;
                     e.Myo.Unlocked += Myo_Unlocked;
@@ -46,7 +49,10 @@ namespace vuwall_motion
 
         private void Myo_PoseChanged(object sender, PoseEventArgs e)
         {
+            PoseChanged(e.Myo.Pose, new EventArgs());
             Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
+            e.Myo.Unlock(UnlockType.Timed);
+            e.Myo.Unlock(UnlockType.Hold);
         }
 
         private void Myo_Unlocked(object sender, MyoEventArgs e)
@@ -57,6 +63,8 @@ namespace vuwall_motion
         private void Myo_Locked(object sender, MyoEventArgs e)
         {
             Console.WriteLine("{0} arm Myo has locked!", e.Myo.Arm);
+            e.Myo.Unlock(UnlockType.Timed);
+            e.Myo.Unlock(UnlockType.Hold);
         }
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MyoSharp.Device;
+using MyoSharp.Poses;
 
 namespace vuwall_motion
 {
@@ -15,7 +17,6 @@ namespace vuwall_motion
         static void Main()
         {
             var Myo = new MyoApi();
-
             Myo.Connect(()=> MessageBox.Show("Running!"));
         }
     }
