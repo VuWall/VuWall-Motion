@@ -8,7 +8,7 @@ using MyoSharp.Poses;
 using NUnit.Framework;
 using vuwall_motion;
 
-namespace TEst
+namespace Test
 {
     class MyoIntegrationTest : AssertionHelper
     {

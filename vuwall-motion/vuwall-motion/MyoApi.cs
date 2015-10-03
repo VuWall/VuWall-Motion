@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Exceptions;
-using MyoSharp.Poses;
 
 namespace vuwall_motion
 {
