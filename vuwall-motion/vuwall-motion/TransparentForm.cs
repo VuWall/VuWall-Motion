@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using MyoSharp.Device;
+using MyoSharp.Math;
+using MyoSharp.Poses;
 
 namespace vuwall_motion {
     public partial class TransparentForm : Form {
@@ -11,8 +13,7 @@ namespace vuwall_motion {
         private Brush brush = new SolidBrush(Color.Red);
         private Size clientRes = Screen.PrimaryScreen.Bounds.Size;
 
-        Point? absoluteTL = null;
-        Point? absoluteBR = null;
+        Vector3F absoluteTL;
 
         private Size blob_size = new Size(50,50);
 
@@ -41,7 +42,7 @@ namespace vuwall_motion {
         }
 
         private void TransparentForm_Paint(object sender, PaintEventArgs e) {
-            foreach (var blob in blobs)
+            foreach (var blob in blobs.ToList())
             {
                 e.Graphics.FillEllipse(brush, blob);
             }
@@ -95,45 +96,45 @@ namespace vuwall_motion {
 
         public void Move(object o, GyroscopeDataEventArgs e)
         {
-            // TODO: Calibration needs improvement...
-            var myo = (Myo)o;
-            if (absoluteTL == null) {
-                absoluteTL = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
-            }
+            if (absoluteTL != null)
+            {
+                var myo = (Myo) o;
+                var orientation = myo.Orientation;
+                var eulerAngles = Math3D.FromQuaternion(orientation) - absoluteTL;
+                var vect = Math3D.DirectionalVector(eulerAngles);
+                var position = Math3D.PixelFromVector(vect);
 
-            var position = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
-            position.Offset(0 - absoluteTL.Value.X, 0 - absoluteTL.Value.Y);
-
-            if (position.X < 0) {
-                position.X = 0;
-            } else if (position.X > clientRes.Width) {
-                position.X = clientRes.Width;
+                if (position.X < 0)
+                {
+                    position.X = 0;
+                }
+                else if (position.X > clientRes.Width)
+                {
+                    position.X = clientRes.Width;
+                }
+                if (position.Y < 0)
+                {
+                    position.Y = 0;
+                }
+                else if (position.Y > clientRes.Height)
+                {
+                    position.Y = clientRes.Height;
+                }
+                blobs[0] = new Rectangle(position, blob_size);
+                Invalidate();
             }
-            if (position.Y < 0) {
-                position.Y = 0;
-            } else if (position.Y > clientRes.Height) {
-                position.Y = clientRes.Height;
-            }
-            blobs[0] = new Rectangle(position, blob_size);
-            Invalidate();
         }
 
         public void Pose(object o, PoseEventArgs e)
         {
             var myo = (Myo)o;
-            var pose = myo.Pose;
-
-            if (pose == MyoSharp.Poses.Pose.Fist) {
-                var api = new WindowApi();
-                var position =
-                    Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
-
-                AddRect(new Rectangle(position, new Size(500,500)));
-                var window = api.WindowFromPoint(new Point((0 - position.X), (0 - position.Y)));
-                //AddRect(window.Area);
-                //var newWindow = new Window(window.Ptr, new Rectangle(0, 0, 600, 600));
-                //api.SetWindow(newWindow);
-                //api.BringToFront(newWindow);
+            if (myo.Pose == MyoSharp.Poses.Pose.DoubleTap)
+            {
+                if (absoluteTL == null)
+                {
+                    absoluteTL = Math3D.FromQuaternion(myo.Orientation);
+                    Console.WriteLine("Calibrated Top Left!");
+                }
             }
         }
     }
