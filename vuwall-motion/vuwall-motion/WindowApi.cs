@@ -23,6 +23,11 @@ namespace vuwall_motion
             _SetWindowPos(window.Ptr, 0, window.Area.X, window.Area.Y, window.Area.Width, window.Area.Height, 0x0040);
         }
 
+        public void BringToFront(Window window)
+        {
+            _SetForegroundWindow(window.Ptr);
+        }
+
         [DllImport("user32.dll", EntryPoint = "WindowFromPoint")]
         public static extern IntPtr _WindowFromPoint(Point point);
 
@@ -31,5 +36,8 @@ namespace vuwall_motion
 
         [DllImport("user32.dll", EntryPoint = "GetWindowRect")]
         public static extern IntPtr _GetWindowRect(IntPtr hWnd, out Rectangle lpRect);
+
+        [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
+        public static extern IntPtr _SetForegroundWindow(IntPtr hWnd);
     }
 }
