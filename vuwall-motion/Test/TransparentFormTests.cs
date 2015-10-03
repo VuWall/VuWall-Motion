@@ -29,11 +29,5 @@ namespace Test {
         {
             Expect(form.Size, Is.EqualTo(Screen.PrimaryScreen.Bounds.Size));
         }
-
-        [Test]
-        public void Test5Seconds()
-        {
-            Thread.Sleep(5000);
-        }
     }
 }
