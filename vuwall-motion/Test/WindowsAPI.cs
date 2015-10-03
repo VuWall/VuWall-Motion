@@ -18,9 +18,6 @@ namespace Test
         [TestMethod]
         public void GetWindow()
         {
-            var wa = new WindowApi();
-            var result = wa.WindowFromPoint(1000, 500);
-            Expect(result, Is.EqualTo(3));
         }
     }
 }

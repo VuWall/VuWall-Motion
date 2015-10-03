@@ -1,0 +1,38 @@
+﻿using System;
+using System.Text;
+using System.Collections.Generic;
+<<<<<<< HEAD
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
+using vuwall_motion;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
+using vuwall_motion;
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+>>>>>>> 04c484f7eb707fd83c3f042c22462fa2341677b2
+
+namespace Test
+{
+    /// <summary>
+    /// Summary description for WindowsAPI
+    /// </summary>
+    [TestClass]
+    public class WindowsAPI : AssertionHelper
+    {
+
+        [TestMethod]
+<<<<<<< HEAD
+        public void GetWindow()
+        {
+            var wa = new WindowApi();
+            var result = wa.WindowFromPoint(1000, 500);
+            Expect(result, Is.EqualTo(3));
+=======
+        public void GetWindows()
+        {
+>>>>>>> 04c484f7eb707fd83c3f042c22462fa2341677b2
+        }
+    }
+}

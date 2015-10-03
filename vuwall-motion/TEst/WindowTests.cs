@@ -24,7 +24,7 @@ namespace TEst
             var newWindow = new Window(window.Ptr, new Rectangle(100, 100, 700, 700));
             wa.SetWindow(newWindow);
             var result = wa.WindowFromPoint(new Point(200, 200));
-            Expect(result.Area, Is.EqualTo(new Rectangle(100, 100, 800, 800)));
+            Expect(result.Area, Is.EqualTo(new Rectangle(100, 100, 700, 700)));
         }
     }
 }
