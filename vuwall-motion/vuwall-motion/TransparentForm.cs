@@ -23,6 +23,6 @@ namespace vuwall_motion {
             e.Graphics.DrawEllipse(Pens.Red, 250, 250, 20, 20);
         }
 
-        // TODO: Method to get an event from MYO to get x & w positions, used to invalidate
+        // TODO: Method to get an event from MYO to get x & y positions, used to invalidate
     }
 }
