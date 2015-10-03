@@ -6,7 +6,10 @@ using System.Collections.Generic;
 namespace vuwall_motion {
     public partial class TransparentForm : Form {
         private Pen pen = new Pen(Color.Red, 5);
-        private Size blob_size = new Size(10,10);
+        private Brush brush = new SolidBrush(Color.Red);
+
+        private Size blob_size = new Size(50,50);
+
         public List<Rectangle> blobs = new List<Rectangle>();
         public List<Rectangle> rectangles = new List<Rectangle>(); 
 
@@ -32,7 +35,7 @@ namespace vuwall_motion {
         private void TransparentForm_Paint(object sender, PaintEventArgs e) {
             foreach (var blob in blobs)
             {
-                e.Graphics.DrawEllipse(pen, blob);
+                e.Graphics.FillEllipse(brush, blob);
             }
 
             foreach (var rect in rectangles)
@@ -66,7 +69,7 @@ namespace vuwall_motion {
 
         public void UpdateBlob(Point pos)
         {
-            // To have multiple blobs working with MYO, we need some sort of identifier to which MYO device controls which blob
+            // To have multiple blobs working with MYO, we need some sort of identifier to map which MYO device controls which blob
             blobs[0] = new Rectangle(pos, blob_size);
             Invalidate();
         }
@@ -85,7 +88,10 @@ namespace vuwall_motion {
 
         private Point CursorPosition()
         {
-            return this.PointToClient(Cursor.Position);
+            var cursorLocation =  this.PointToClient(Cursor.Position);
+            var centerX = cursorLocation.X - blob_size.Width / 2;
+            var centerY = cursorLocation.Y - blob_size.Height / 2;
+            return (new Point(centerX, centerY));
         }
     }
 }
