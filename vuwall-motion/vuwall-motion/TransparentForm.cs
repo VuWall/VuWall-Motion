@@ -8,11 +8,6 @@ namespace vuwall_motion {
         }
 
         private void TransparentForm_Load(object sender, EventArgs e) {
-
-        }
-
-        protected override void OnShown(EventArgs e) {
-            base.OnShown(e);
             int wl = TransparentWindowAPI.GetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle);
             wl = wl | 0x80000 | 0x20;
             TransparentWindowAPI.SetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle, wl);

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using vuwall_motion;
 using System.Drawing;
+using System.Threading;
 
 namespace Test {
     public class TransparentFormTests : AssertionHelper
@@ -27,6 +28,12 @@ namespace Test {
         public void Basic()
         {
             Expect(form.Size, Is.EqualTo(Screen.PrimaryScreen.Bounds.Size));
+        }
+
+        [Test]
+        public void Test5Seconds()
+        {
+            Thread.Sleep(5000);
         }
     }
 }

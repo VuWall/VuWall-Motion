@@ -18,7 +18,7 @@ namespace vuwall_motion {
 
         public enum LWA {
             ColorKey = 0x1,
-            Alpha = 0x2
+            Alpha = 0x5
         }
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
