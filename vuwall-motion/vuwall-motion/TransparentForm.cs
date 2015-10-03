@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using MyoSharp.Device;
 
 namespace vuwall_motion {
     public partial class TransparentForm : Form {
@@ -91,6 +92,13 @@ namespace vuwall_motion {
         public void DeleteRect(Rectangle rect)
         {
             rectangles.Remove(rect);
+            Invalidate();
+        }
+
+        public void Move(object sender, GyroscopeDataEventArgs e)
+        {
+            var point = new Point(Convert.ToInt32(e.Gyroscope.X), Convert.ToInt32(e.Gyroscope.Y));
+            blobs[0] = new Rectangle(point, blob_size);
             Invalidate();
         }
 

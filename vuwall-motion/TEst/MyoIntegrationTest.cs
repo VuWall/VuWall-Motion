@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MyoSharp.Device;
 using MyoSharp.Poses;
 using NUnit.Framework;
 using vuwall_motion;
@@ -36,7 +37,7 @@ namespace Test
         public void TestFistPose()
         {
             var wasCalled = false;
-            MyoApi.PoseChanged += (sender, e) => { if (((Pose)sender).Equals(Pose.Fist)) wasCalled = true; };
+            MyoApi.PoseChanged += (sender, e) => { if ((((Myo)sender).Pose).Equals(Pose.Fist)) wasCalled = true; };
 
             myo.Connect(() =>
             {
@@ -51,7 +52,7 @@ namespace Test
         public void TestRestPose()
         {
             var wasCalled = false;
-            MyoApi.PoseChanged += (sender, e) => { if (((Pose)sender).Equals(Pose.Rest)) wasCalled = true; };
+            MyoApi.PoseChanged += (sender, e) => { if ((((Myo)sender).Pose).Equals(Pose.Rest)) wasCalled = true; };
 
             myo.Connect(() =>
             {
@@ -66,7 +67,7 @@ namespace Test
         public void TestWaveInPose()
         {
             var wasCalled = false;
-            MyoApi.PoseChanged += (sender, e) => { if (((Pose)sender).Equals(Pose.WaveIn)) wasCalled = true; };
+            MyoApi.PoseChanged += (sender, e) => { if ((((Myo)sender).Pose).Equals(Pose.WaveIn)) wasCalled = true; };
 
             myo.Connect(() =>
             {
@@ -81,7 +82,7 @@ namespace Test
         public void TestWaveOutPose()
         {
             var wasCalled = false;
-            MyoApi.PoseChanged += (sender, e) => { if (((Pose)sender).Equals(Pose.WaveOut)) wasCalled = true; };
+            MyoApi.PoseChanged += (sender, e) => { if ((((Myo)sender).Pose).Equals(Pose.WaveOut)) wasCalled = true; };
 
             myo.Connect(() =>
             {
@@ -96,7 +97,7 @@ namespace Test
         public void TestSpreadPose()
         {
             var wasCalled = false;
-            MyoApi.PoseChanged += (sender, e) => { if (((Pose)sender).Equals(Pose.FingersSpread)) wasCalled = true; };
+            MyoApi.PoseChanged += (sender, e) => { if ((((Myo)sender).Pose).Equals(Pose.FingersSpread)) wasCalled = true; };
 
             myo.Connect(() =>
             {
@@ -111,7 +112,7 @@ namespace Test
         public void TestDoubleTapPose()
         {
             var wasCalled = false;
-            MyoApi.PoseChanged += (sender, e) => { if (((Pose)sender).Equals(Pose.DoubleTap)) wasCalled = true; };
+            MyoApi.PoseChanged += (sender, e) => { if ((((Myo)sender).Pose).Equals(Pose.DoubleTap)) wasCalled = true; };
 
             myo.Connect(() =>
             {
