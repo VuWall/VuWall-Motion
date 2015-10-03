@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace vuwall_motion {
@@ -16,6 +9,14 @@ namespace vuwall_motion {
 
         private void TransparentForm_Load(object sender, EventArgs e) {
 
+        }
+
+        protected override void OnShown(EventArgs e) {
+            base.OnShown(e);
+            int wl = TransparentWindowAPI.GetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle);
+            wl = wl | 0x80000 | 0x20;
+            TransparentWindowAPI.SetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle, wl);
+            TransparentWindowAPI.SetLayeredWindowAttributes(this.Handle, 0, 128, TransparentWindowAPI.LWA.Alpha);
         }
     }
 }

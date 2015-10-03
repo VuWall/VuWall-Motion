@@ -6,8 +6,9 @@ using System.Windows.Forms;
 
 namespace vuwall_motion {
     static class Program {
-        static void Main() {
-
+        static void Main()
+        {
+            
         }
     }
 }

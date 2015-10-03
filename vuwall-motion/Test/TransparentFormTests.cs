@@ -26,8 +26,6 @@ namespace Test {
         [Test]
         public void Basic()
         {
-            var formSize = form.Size;
-            var screenRes = Screen.PrimaryScreen.Bounds;
             Expect(form.Size, Is.EqualTo(Screen.PrimaryScreen.Bounds.Size));
         }
     }
