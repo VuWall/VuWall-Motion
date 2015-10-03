@@ -17,9 +17,13 @@ namespace vuwall_motion {
         {
 
             var myoApi = new MyoApi();
-            myoApi.Connect(() => MessageBox.Show("hello"));
-            //var form = new TransparentForm();
-            //MyoApi.GyroscopeChanged += (o, e) => form.Move(o, (GyroscopeDataEventArgs)e);
+            
+            var form = new TransparentForm();
+            MyoApi.GyroscopeChanged += (o, e) => form.Move(o, (GyroscopeDataEventArgs)e);
+            myoApi.Connect(() => {Application.Run(form);
+                                     return false;
+            });
+            
 
             //MyoApi.PoseChanged += ((o, e) =>
             //{

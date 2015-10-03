@@ -8,6 +8,10 @@ namespace vuwall_motion {
     public partial class TransparentForm : Form {
         private Pen pen = new Pen(Color.Red, 5);
         private Brush brush = new SolidBrush(Color.Red);
+        private Size clientRes = Screen.PrimaryScreen.Bounds.Size;
+
+        Point? absoluteTL = null;
+        Point? absoluteBR = null;
 
         private Size blob_size = new Size(50,50);
 
@@ -30,7 +34,7 @@ namespace vuwall_motion {
             TransparentWindowAPI.SetLayeredWindowAttributes(this.Handle, 0, 128, TransparentWindowAPI.LWA.Alpha);
 
             // Initialize data for testing
-            blobs.Add(new Rectangle(CursorPosition(), blob_size));
+            blobs.Add(new Rectangle(new Point(0,0), blob_size));
             rectangles.Add(new Rectangle(CursorPosition(), new Size(500,500)));
             Invalidate();
         }
@@ -50,11 +54,6 @@ namespace vuwall_motion {
         private void TransparentForm_MouseClick(object sender, EventArgs e)
         {
             UpdateRect(new Rectangle(CursorPosition(), new Size(500,500)));
-        }
-
-        private void TransparentForm_MouseMove(object sender, EventArgs e)
-        {
-            UpdateBlob(CursorPosition());
         }
 
         public void AddBlob(Point pos)
@@ -95,14 +94,30 @@ namespace vuwall_motion {
             Invalidate();
         }
 
-        public void Move(object sender, GyroscopeDataEventArgs e)
+        public void Move(object o, GyroscopeDataEventArgs e)
         {
-            var point = new Point(Convert.ToInt32(e.Gyroscope.X), Convert.ToInt32(e.Gyroscope.Y));
-            blobs[0] = new Rectangle(point, blob_size);
+            // TODO: Calibration needs improvement...
+            var myo = (Myo)o;
+            if (absoluteTL == null) {
+                absoluteTL = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
+            }
+
+            var position = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
+            position.Offset(0 - absoluteTL.Value.X, 0 - absoluteTL.Value.Y);
+
+            if (position.X < 0) {
+                position.X = 0;
+            } else if (position.X > clientRes.Width) {
+                position.X = clientRes.Width;
+            }
+            if (position.Y < 0) {
+                position.Y = 0;
+            } else if (position.Y > clientRes.Height) {
+                position.Y = clientRes.Height;
+            }
+            blobs[0] = new Rectangle(position, blob_size);
             Invalidate();
         }
-
-        // TODO: Method to get an event from MYO to get x & y positions, used to invalidate
 
         // TODO: Method to get an event from MYO to get the rectangle of a given window
 
