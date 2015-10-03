@@ -52,7 +52,7 @@ namespace vuwall_motion
 
         private void Myo_PoseChanged(object sender, PoseEventArgs e)
         {
-            PoseChanged(e.Myo, new EventArgs());
+            PoseChanged(e.Myo, e);
             Console.WriteLine("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose);
             e.Myo.Unlock(UnlockType.Timed);
             e.Myo.Unlock(UnlockType.Hold);
@@ -61,6 +61,7 @@ namespace vuwall_motion
         public void Myo_GyroscopeDataAcquired(object o, GyroscopeDataEventArgs e)
         {
             MyoApi.GyroscopeChanged(o, e);
+            //Console.WriteLine("X: {0}, Y: {1}", e.Gyroscope.X, e.Gyroscope.Y);
         }
 
         private void Myo_Unlocked(object sender, MyoEventArgs e)

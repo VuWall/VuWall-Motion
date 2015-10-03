@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Linq;
 using MyoSharp.Device;
 
 namespace vuwall_motion {
@@ -24,6 +25,7 @@ namespace vuwall_motion {
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             TransparencyKey = BackColor;
             ShowInTaskbar = false;
+            this.TopMost = true;
         }
 
         private void TransparentForm_Load(object sender, EventArgs e)
@@ -35,7 +37,6 @@ namespace vuwall_motion {
 
             // Initialize data for testing
             blobs.Add(new Rectangle(new Point(0,0), blob_size));
-            rectangles.Add(new Rectangle(CursorPosition(), new Size(500,500)));
             Invalidate();
         }
 
@@ -45,15 +46,13 @@ namespace vuwall_motion {
                 e.Graphics.FillEllipse(brush, blob);
             }
 
-            foreach (var rect in rectangles)
+            if (rectangles.Any())
             {
-                e.Graphics.DrawRectangle(pen, rect);
+                foreach (var rect in rectangles)
+                {
+                    e.Graphics.DrawRectangle(pen, rect);
+                }
             }
-        }
-
-        private void TransparentForm_MouseClick(object sender, EventArgs e)
-        {
-            UpdateRect(new Rectangle(CursorPosition(), new Size(500,500)));
         }
 
         public void AddBlob(Point pos)
@@ -119,14 +118,23 @@ namespace vuwall_motion {
             Invalidate();
         }
 
-        // TODO: Method to get an event from MYO to get the rectangle of a given window
-
-        private Point CursorPosition()
+        public void Pose(object o, PoseEventArgs e)
         {
-            var cursorLocation =  this.PointToClient(Cursor.Position);
-            var centerX = cursorLocation.X - blob_size.Width / 2;
-            var centerY = cursorLocation.Y - blob_size.Height / 2;
-            return (new Point(centerX, centerY));
+            var myo = (Myo)o;
+            var pose = myo.Pose;
+
+            if (pose == MyoSharp.Poses.Pose.Fist) {
+                var api = new WindowApi();
+                var position =
+                    Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
+
+                AddRect(new Rectangle(position, new Size(500,500)));
+                var window = api.WindowFromPoint(new Point((0 - position.X), (0 - position.Y)));
+                //AddRect(window.Area);
+                //var newWindow = new Window(window.Ptr, new Rectangle(0, 0, 600, 600));
+                //api.SetWindow(newWindow);
+                //api.BringToFront(newWindow);
+            }
         }
     }
 }
