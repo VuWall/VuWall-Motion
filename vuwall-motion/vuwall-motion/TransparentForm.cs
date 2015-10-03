@@ -6,6 +6,7 @@ using System.Collections.Generic;
 namespace vuwall_motion {
     public partial class TransparentForm : Form {
         private Pen pen = new Pen(Color.Red, 5);
+        private Size blob_size = new Size(10,10);
         public List<Rectangle> blobs = new List<Rectangle>();
         public List<Rectangle> rectangles = new List<Rectangle>(); 
 
@@ -22,6 +23,9 @@ namespace vuwall_motion {
             int wl = TransparentWindowAPI.GetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle);
             wl = wl | 0x80000 | 0x20;
             TransparentWindowAPI.SetLayeredWindowAttributes(this.Handle, 0, 128, TransparentWindowAPI.LWA.Alpha);
+            // Initialize data for testing
+            blobs.Add(new Rectangle(CursorPosition(), blob_size));
+            rectangles.Add(new Rectangle(CursorPosition(), new Size(500,500)));
             Invalidate();
         }
 
@@ -39,22 +43,49 @@ namespace vuwall_motion {
 
         private void TransparentForm_MouseClick(object sender, EventArgs e)
         {
-            Point local = this.PointToClient(Cursor.Position);
-            AddRectangle(new Rectangle(local.X, local.Y, 500,500 ));
+            UpdateRect(new Rectangle(CursorPosition(), new Size(500,500)));
         }
 
-        public void AddBlob(Rectangle blob)
+        private void TransparentForm_MouseMove(object sender, EventArgs e)
         {
+            UpdateBlob(CursorPosition());
+        }
+
+        public void AddBlob(Point pos)
+        {
+            Rectangle blob = new Rectangle(pos, blob_size);
             blobs.Add(blob);
             Invalidate();
         }
 
-        public void AddRectangle(Rectangle rect)
+        public void AddRect(Rectangle rect)
         {
             rectangles.Add(rect);
             Invalidate();
         }
 
+        public void UpdateBlob(Point pos)
+        {
+            // To have multiple blobs working with MYO, we need some sort of identifier to which MYO device controls which blob
+            blobs[0] = new Rectangle(pos, blob_size);
+            Invalidate();
+        }
+
+        public void UpdateRect(Rectangle rect)
+        {
+            rectangles[0] = rect;
+            Invalidate();
+        }
+
+        // TODO: Delete Blob/rect
+
         // TODO: Method to get an event from MYO to get x & y positions, used to invalidate
+
+        // TODO: Method to get an event from MYO to get the rectangle of a given window
+
+        private Point CursorPosition()
+        {
+            return this.PointToClient(Cursor.Position);
+        }
     }
 }

@@ -33,14 +33,14 @@ namespace Test {
         [Test]
         public void AddBlob()
         {
-            form.AddBlob(new Rectangle(0,0,25,25));
+            form.AddBlob(new Point(300,300));
             Expect(form.blobs.Count, Is.EqualTo(1));
         }
 
         [Test]
         public void AddRectangle()
         {
-            form.AddRectangle(new Rectangle(0,0,500,500));
+            form.AddRect(new Rectangle(0,0,500,500));
             Expect(form.rectangles.Count, Is.EqualTo((1)));
         }
     }

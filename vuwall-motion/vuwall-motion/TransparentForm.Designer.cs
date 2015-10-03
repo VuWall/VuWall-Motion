@@ -40,6 +40,7 @@ namespace vuwall_motion {
             this.Load += new EventHandler(this.TransparentForm_Load);
             this.Paint += new PaintEventHandler(this.TransparentForm_Paint);
             this.MouseClick += new MouseEventHandler(this.TransparentForm_MouseClick);
+            this.MouseMove += new MouseEventHandler(this.TransparentForm_MouseMove);
             this.ResumeLayout(false);
             this.FormBorderStyle = FormBorderStyle.None;
         }
