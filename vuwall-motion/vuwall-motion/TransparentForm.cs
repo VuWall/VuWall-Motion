@@ -26,6 +26,19 @@ namespace vuwall_motion {
             e.Graphics.DrawEllipse(pen, 250, 250, 20, 20);
         }
 
+        private void TransparentForm_MouseClick(object sender, EventArgs e)
+        {
+            Point local = this.PointToClient(Cursor.Position);
+            drawRect(new Rectangle(local.X,local.Y,500,500));
+        }
+
+        public void drawRect(Rectangle rect)
+        {
+            Graphics g = this.CreateGraphics();
+            g.DrawRectangle(pen, rect);
+            g.Dispose();
+        }
+
         // TODO: Method to get an event from MYO to get x & y positions, used to invalidate
     }
 }
