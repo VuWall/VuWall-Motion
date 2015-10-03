@@ -9,6 +9,13 @@ namespace vuwall_motion
 {
     public class Window
     {
+        public IntPtr Ptr { get; private set; }
         public Rectangle Area { get; private set; }
+
+        public Window(IntPtr ptr, Rectangle area)
+        {
+            Ptr = ptr;
+            Area = area;
+        }
     }
 }
