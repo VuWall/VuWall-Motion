@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.AccessControl;
 using System.Windows.Forms;
 
 namespace vuwall_motion {
@@ -36,7 +37,8 @@ namespace vuwall_motion {
             this.ClientSize = clientRes.Size;
             this.Name = "TransparentForm";
             this.Text = "TransparentForm";
-            this.Load += new System.EventHandler(this.TransparentForm_Load);
+            this.Load += new EventHandler(this.TransparentForm_Load);
+            this.Paint += new PaintEventHandler(this.TransparentForm_Paint);
             this.ResumeLayout(false);
             this.FormBorderStyle = FormBorderStyle.None;
         }
