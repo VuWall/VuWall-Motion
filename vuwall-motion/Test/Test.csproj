@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Dummy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuaternionTests.cs" />
     <Compile Include="WindowTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +55,10 @@
     <ProjectReference Include="..\vuwall-motion\vuwall-motion.csproj">
       <Project>{464dfdbc-bfb6-4894-9d8f-f200808a1798}</Project>
       <Name>vuwall-motion</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\davidl\Downloads\MyoSharp-master\MyoSharp-master\MyoSharp\MyoSharp.csproj">
+      <Project>{b075c7e9-fe48-4508-b44c-1a259bcc8b22}</Project>
+      <Name>MyoSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

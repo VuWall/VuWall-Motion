@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using MyoSharp.Math;
 
 namespace TEst
 {
@@ -14,6 +10,13 @@ namespace TEst
         public void Test()
         {
             Expect(true, Is.EqualTo(true));
+        }
+
+        [TestCase]
+        public void QuickTest()
+        {
+            QuaternionF thing = new QuaternionF(0, 1, 2, 3);
+            Expect(thing.X, Is.EqualTo(0));
         }
     }
 }
