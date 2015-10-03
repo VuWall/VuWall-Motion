@@ -7,6 +7,7 @@ namespace vuwall_motion {
         public TransparentForm() {
             InitializeComponent();
             DoubleBuffered = true;
+            ShowInTaskbar = false;
         }
 
         private void TransparentForm_Load(object sender, EventArgs e)
