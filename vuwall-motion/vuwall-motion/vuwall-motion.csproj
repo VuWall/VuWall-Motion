@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calibration.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="MyoApi.cs" />
     <Compile Include="Program.cs" />

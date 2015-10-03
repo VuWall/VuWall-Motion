@@ -8,7 +8,7 @@ namespace vuwall_motion
     {
         public static Point PixelFromVector(Vector3F v)
         {
-            var inverted = new Vector3F(0 - v.X, v.Y, v.Z);
+            var inverted = new Vector3F(0 - v.X, 0 - v.Y, v.Z);
             var distFromScreen = 2300;
             var position = new Point(960, 540);
             var ratio = (distFromScreen / inverted.Z);
