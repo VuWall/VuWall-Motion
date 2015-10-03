@@ -121,5 +121,19 @@ namespace Test
 
             Assert.That(wasCalled, Is.True);
         }
+
+        [Test]
+        public void TestBringToFrontPose()
+        {
+            var wasCalled = false;
+            MyoApi.PoseSequenceDetected += (sender, e) => { Console.WriteLine(sender);};
+
+            myo.Connect(() =>
+            {
+                Thread.Sleep(5000);
+                return false;
+            });
+
+        }
     }
 }
