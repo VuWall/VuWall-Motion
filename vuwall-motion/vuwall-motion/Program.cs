@@ -16,7 +16,7 @@ namespace vuwall_motion {
         private static void Main()
         {
             Point? tlAlteration = null;
-            PointF? brRation = null;
+            PointF? brRatio = null;
             Point absoluteTL = new Point();
 
             using (var channel = Channel.Create(ChannelDriver.Create(ChannelBridge.Create(), MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create()))))
@@ -29,14 +29,16 @@ namespace vuwall_motion {
                         e.Myo.Unlock(UnlockType.Timed);
                         e.Myo.GyroscopeDataAcquired += (o, args) =>
                         {
-                            if (tlAlteration != null && brRation != null)
+                            if (tlAlteration != null && brRatio != null)
                             {
                                 var myo = (Myo) o;
-                                var position = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
+                                var vect = Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation));
+                                Console.WriteLine(vect);
+                                var position = Math3D.PixelFromVector(vect);
                                 //Console.WriteLine(position + " : " + tlAlteration + " : " + brRation);
                                 var calibrated = position;
-                                //var calibrated = Calibration.AlterPoint((Point) tlAlteration, (PointF) brRation, position);
-                                Console.WriteLine(calibrated);
+                                //var calibrated = Calibration.AlterPoint((Point) tlAlteration, (PointF) brRatio, position);
+                                //Console.WriteLine(calibrated);
                                 if (calibrated.X < 0)
                                 {
                                     calibrated.X = 0;
@@ -68,18 +70,12 @@ namespace vuwall_motion {
                                     tlAlteration = Calibration.CalibrateTL(absoluteTL);
                                     Console.WriteLine("Calibrated Top Left!");
                                 }
-                                else if (brRation == null)
+                                else if (brRatio == null)
                                 {
                                     Point absoluteBR = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
-                                    brRation = Calibration.CalibrateBR(new Point(1920, 1080), absoluteTL, absoluteBR);
-                                    Console.WriteLine("Calibrated! " + tlAlteration.ToString() + " : " + brRation);
+                                    brRatio = Calibration.CalibrateBR(new Point(1920, 1080), absoluteTL, absoluteBR);
+                                    Console.WriteLine("Calibrated! " + tlAlteration.ToString() + " : " + brRatio);
                                 }
-                                //var api = new WindowApi();
-                                //var position = Math3D.PixelFromVector(Math3D.DirectionalVector(Math3D.FromQuaternion(myo.Orientation)));
-                                //var window = api.WindowFromPoint(position);
-                                //var newWindow = new Window(window.Ptr, new Rectangle(0, 0, 600, 600));
-                                //api.SetWindow(newWindow);
-                                //api.BringToFront(newWindow);
                             }
 
                             if (!myo.IsUnlocked)
