@@ -25,7 +25,9 @@ namespace vuwall_motion {
         {
             int wl = TransparentWindowAPI.GetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle);
             wl = wl | 0x80000 | 0x20;
+            TransparentWindowAPI.SetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle, wl);
             TransparentWindowAPI.SetLayeredWindowAttributes(this.Handle, 0, 128, TransparentWindowAPI.LWA.Alpha);
+
             // Initialize data for testing
             blobs.Add(new Rectangle(CursorPosition(), blob_size));
             rectangles.Add(new Rectangle(CursorPosition(), new Size(500,500)));
