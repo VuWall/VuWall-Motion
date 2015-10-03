@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace vuwall_motion
+{
+    public class Window
+    {
+<<<<<<< HEAD
+        public IntPtr Ptr { get; private set; }
+        public Rectangle Area { get; private set; }
+
+        public Window(IntPtr ptr, Rectangle area)
+        {
+            Ptr = ptr;
+            Area = area;
+        }
+=======
+        public Rectangle Area { get; private set; }
+>>>>>>> 04c484f7eb707fd83c3f042c22462fa2341677b2
+    }
+}
