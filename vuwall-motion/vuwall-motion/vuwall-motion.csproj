@@ -71,7 +71,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\davidl\Downloads\MyoSharp-master\MyoSharp-master\MyoSharp\MyoSharp.csproj">
+    <ProjectReference Include="..\MyoSharp\MyoSharp.csproj">
       <Project>{b075c7e9-fe48-4508-b44c-1a259bcc8b22}</Project>
       <Name>MyoSharp</Name>
     </ProjectReference>
