@@ -51,5 +51,40 @@ namespace TEst
             var exception = Assert.Throws<ArgumentException>(() => HeldPose.Create(myo.Object));
             Assert.That(exception.ParamName, Is.EqualTo("targetPoses"));
         }
+
+        [TestCase]
+        public void DiscoverInvalidMyoPose()
+        {
+            var myo = new Mock<IMyoEventGenerator>(MockBehavior.Strict);
+
+            var gesture = Pose.DoubleTap;
+
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => HeldPose.Create(myo.Object,
+                TimeSpan.FromSeconds(-1), gesture));
+
+            Assert.That(exception.ParamName, Is.EqualTo("interval"));
+        }
+
+        [TestCase]
+        public void DiscoverSinglePose()
+        {
+            var myo = new Mock<IMyoEventGenerator>(MockBehavior.Strict);
+            var gesture = Pose.Fist;
+
+            var result = HeldPose.Create(myo.Object, gesture);
+
+            Assert.NotNull(result);
+        }
+
+        [TestCase]
+        public void DiscoverSequenceOfPoses()
+        {
+            var myo = new Mock<IMyoEventGenerator>(MockBehavior.Strict);
+            var gestures = new Pose[] { Pose.WaveIn, Pose.WaveOut };
+
+            var result = HeldPose.Create(myo.Object, gestures);
+
+            Assert.NotNull(result);
+        }
     }
 }
