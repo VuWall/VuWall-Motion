@@ -15,6 +15,14 @@ namespace vuwall_motion {
     static class Program {
         private static void Main()
         {
+            var myoApi = new MyoApi();
+            
+            var form = new TransparentForm();
+            MyoApi.GyroscopeChanged += (o, e) => form.Move(o, (GyroscopeDataEventArgs)e);
+            MyoApi.PoseChanged += (o, e) => form.Pose(o, (PoseEventArgs)e);
+            myoApi.Connect(() => {Application.Run(form);
+                                     return false;
+            });
         }
     }
 }

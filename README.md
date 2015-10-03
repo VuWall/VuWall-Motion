@@ -1,1 +1,1 @@
-# vuwall-motion
+# VuWall Motion
