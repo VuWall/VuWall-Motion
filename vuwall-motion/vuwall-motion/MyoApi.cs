@@ -9,9 +9,11 @@ namespace vuwall_motion
     {
         public bool IsConnected { get; private set; }
         public static event EventHandler PoseChanged;
+        
 
         public void Connect<T>(Func<T> process)
         {
+            MyoApi.PoseChanged += (sender, args) => { };
             using (var channel = Channel.Create(
                ChannelDriver.Create(ChannelBridge.Create(),
                MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create()))))
