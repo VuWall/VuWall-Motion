@@ -150,11 +150,14 @@ namespace vuwall_motion {
                     var window = api.WindowFromPoint(position);
                     if (window != null)
                     {
-                        SelectedWindow.Add(myo, api.GetRoot(window));
-                        if (SelectedWindow.ContainsKey(myo)) {
-                            if (!DragOffset.ContainsKey(myo))
-                            {
-                                DragOffset.Add(myo, new Point(position.X - SelectedWindow[myo].Area.Location.X, position.Y - SelectedWindow[myo].Area.Location.Y));
+                        if (!SelectedWindow.ContainsKey(myo))
+                        {
+                            SelectedWindow.Add(myo, api.GetRoot(window));
+                            if (SelectedWindow.ContainsKey(myo)) {
+                                if (!DragOffset.ContainsKey(myo))
+                                {
+                                    DragOffset.Add(myo, new Point(position.X - SelectedWindow[myo].Area.Location.X, position.Y - SelectedWindow[myo].Area.Location.Y));
+                                }
                             }
                         }
                     }
