@@ -76,8 +76,10 @@ namespace vuwall_motion
             }
             Rectangle rect;
             _GetWindowRect(ptr, out rect);
-            _AdjustWindowRect(ref rect, 0x10000000L, true);
-            return new Window(ptr, rect);
+            var pos = new Point(rect.Left, rect.Top);
+            _GetClientRect(ptr, out rect);
+            var winArea = new Rectangle(pos.X, pos.Y, rect.Width, rect.Height);
+            return new Window(ptr, winArea);
         }
 
         public Window GetRoot(Window child)
@@ -89,8 +91,10 @@ namespace vuwall_motion
             }
             Rectangle rect;
             _GetWindowRect(ptr, out rect);
-            _AdjustWindowRect(ref rect, 0x10000000L, true);
-            return new Window(ptr, rect);
+            var pos = new Point(rect.Left, rect.Top);
+            _GetClientRect(ptr, out rect);
+            var winArea = new Rectangle(pos.X, pos.Y, rect.Width, rect.Height);
+            return new Window(ptr, winArea);
         }
 
         public void SetWindow(Window window)
@@ -112,8 +116,10 @@ namespace vuwall_motion
             }
             Rectangle rect;
             _GetWindowRect(ptr, out rect);
-            _AdjustWindowRect(ref rect, 0x10000000L, true);
-            return new Window(ptr, rect);
+            var pos = new Point(rect.Left, rect.Top);
+            _GetClientRect(ptr, out rect);
+            var winArea = new Rectangle(pos.X, pos.Y, rect.Width, rect.Height);
+            return new Window(ptr, winArea);
         }
 
         [DllImport("user32.dll", EntryPoint = "WindowFromPoint")]
@@ -150,7 +156,7 @@ namespace vuwall_motion
         public static extern bool _EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
-        [DllImport("user32.dll", EntryPoint = "AdjustWindowRect")]
-        public static extern bool _AdjustWindowRect(ref Rectangle lpRect, long dwStyle, bool bMenu);
+        [DllImport("user32.dll", EntryPoint = "GetClientRect")]
+        public static extern bool _GetClientRect(IntPtr hwnd, out Rectangle lpRect);
     }
 }
