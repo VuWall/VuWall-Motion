@@ -99,27 +99,7 @@ namespace vuwall_motion {
             if (absoluteTL != null)
             {
                 var myo = (Myo) o;
-                var orientation = myo.Orientation;
-                var eulerAngles = Math3D.FromQuaternion(orientation) - absoluteTL;
-                var vect = Math3D.DirectionalVector(eulerAngles);
-                var position = Math3D.PixelFromVector(vect);
-
-                if (position.X < 0)
-                {
-                    position.X = 0;
-                }
-                else if (position.X > clientRes.Width)
-                {
-                    position.X = clientRes.Width;
-                }
-                if (position.Y < 0)
-                {
-                    position.Y = 0;
-                }
-                else if (position.Y > clientRes.Height)
-                {
-                    position.Y = clientRes.Height;
-                }
+                var position = GetPixelPosition(myo);
                 blobs[0] = new Rectangle(position, blob_size);
                 Invalidate();
             }
@@ -136,6 +116,52 @@ namespace vuwall_motion {
                     Console.WriteLine("Calibrated Top Left!");
                 }
             }
+            else if (myo.Pose == MyoSharp.Poses.Pose.Fist)
+            {
+                if (absoluteTL != null)
+                {
+                    var position = GetPixelPosition(myo);
+                    var api = new WindowApi();
+                    var window = api.WindowFromPoint(position);
+                    AddRect(window.Area);
+                }
+            }
+            else
+            {
+                if (absoluteTL != null)
+                {
+                    if (rectangles.Any())
+                    {
+                        rectangles.ToList().ForEach(r => DeleteRect(r));
+                    }
+                }
+            }
+        }
+
+        public Point GetPixelPosition(Myo myo)
+        {
+            var orientation = myo.Orientation;
+            var eulerAngles = Math3D.FromQuaternion(orientation) - absoluteTL;
+            var vect = Math3D.DirectionalVector(eulerAngles);
+            var position = Math3D.PixelFromVector(vect);
+
+            if (position.X < 0)
+            {
+                position.X = 0;
+            }
+            else if (position.X > clientRes.Width)
+            {
+                position.X = clientRes.Width;
+            }
+            if (position.Y < 0)
+            {
+                position.Y = 0;
+            }
+            else if (position.Y > clientRes.Height)
+            {
+                position.Y = clientRes.Height;
+            }
+            return position;
         }
     }
 }
