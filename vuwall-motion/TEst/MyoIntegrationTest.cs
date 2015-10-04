@@ -135,8 +135,8 @@ namespace Test
             var wasCalled = false;
             MyoApi.PoseSequenceDetected += (sender, e) =>
             {
-                var poses = ((PoseSequence) sender)._sequence.ToArray();
-                if (poses.Intersect(new[]{ Pose.WaveIn, Pose.WaveIn}).Count() == poses.Length)
+                var poses = ((PoseSequence)sender)._sequence.ToArray();
+                if (poses.Length == 2 && poses.First().Equals(Pose.WaveIn) && poses.Last().Equals(Pose.WaveIn))
                 {
                     wasCalled = true;
                 }
@@ -144,7 +144,7 @@ namespace Test
 
             myo.Connect(() =>
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(8000);
                 return false;
             });
 
@@ -158,7 +158,7 @@ namespace Test
             MyoApi.PoseSequenceDetected += (sender, e) =>
             {
                 var poses = ((PoseSequence)sender)._sequence.ToArray();
-                if (poses.Intersect(new[] { Pose.WaveOut, Pose.WaveOut }).Count() == poses.Length)
+                if (poses.Length == 2 && poses.First().Equals(Pose.WaveOut) && poses.Last().Equals(Pose.WaveOut))
                 {
                     wasCalled = true;
                 }
@@ -166,11 +166,35 @@ namespace Test
 
             myo.Connect(() =>
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(8000);
                 return false;
             });
 
             Assert.That(wasCalled, Is.True);
+        }
+
+        [Test]
+        public void TestHoldPose()
+        {
+            var wasCalled = false;
+
+            MyoApi.PoseHoldDetected += (sender, e) =>
+            {
+                var holdPose = ((HeldPose)sender);
+                if (holdPose != null)
+                {
+                    wasCalled = true;
+                }
+            };
+
+            myo.Connect(() =>
+            {
+                Thread.Sleep(5000);
+                return false;
+            });
+
+            Assert.That(wasCalled, Is.True);
+
         }
     }
 }
