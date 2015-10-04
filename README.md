@@ -22,6 +22,6 @@ We got 40 green, mean, and lean passing tests (integration and unit). Like a bos
 We also achieved multi myo band window control and collaboration.
 
 ## What's next for VuWall Motion?
-Utilization of more gestures, resizing of windows, transition animations, integration with VuWall2 (recalling layouts, calling scripts, talking to network devices such as lights or blinds)
+Utilization of more gestures, resizing of windows, transition animations, integration with [VuWall2](http://vuwall.com/products/vuwall2/) (recalling layouts, calling scripts, talking to network devices such as lights or blinds)
 The greatest improvement would be using Euler angles only for screen positioning so the calibration would tell the software at what angle the edges of the screen are and this would allow us to get rid of the distance from screen.
 
