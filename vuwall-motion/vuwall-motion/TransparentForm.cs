@@ -124,8 +124,14 @@ namespace vuwall_motion {
                     var position = GetPixelPosition(myo);
                     var api = new WindowApi();
                     var window = api.WindowFromPoint(position);
-                    SelectedWindow = api.GetRoot(window);
-                    AddRect(SelectedWindow.Area);
+                    if (window != null)
+                    {
+                        SelectedWindow = api.GetRoot(window);
+                        if (SelectedWindow != null)
+                        {
+                            AddRect(SelectedWindow.Area);
+                        }
+                    }
                 }
             }
             else
