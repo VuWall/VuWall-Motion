@@ -114,6 +114,11 @@ namespace vuwall_motion {
                     absoluteTL = Math3D.FromQuaternion(myo.Orientation);
                     Console.WriteLine("Calibrated Top Left!");
                 }
+                else
+                {
+                    absoluteTL = null;
+                    UpdateBlob(new Point(0, 0));
+                }
             }
             else if (myo.Pose == MyoSharp.Poses.Pose.Fist)
             {
