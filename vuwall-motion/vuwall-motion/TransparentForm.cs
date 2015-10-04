@@ -149,6 +149,7 @@ namespace vuwall_motion {
                         var newWindow = new Window(SelectedWindow.Ptr, new Rectangle(position.X, position.Y, SelectedWindow.Area.Width, SelectedWindow.Area.Height));
                         SelectedWindow = null;
                         api.SetWindow(newWindow);
+                        api.BringToFront(newWindow);
                     }
                     if (rectangles.Any())
                     {
