@@ -14,6 +14,8 @@ namespace vuwall_motion {
         private Size clientRes = Screen.PrimaryScreen.Bounds.Size;
         private Dictionary<Myo, Window> SelectedWindow = new Dictionary<Myo, Window>();
         private Dictionary<Myo, Point?> DragOffset = new Dictionary<Myo, Point?>();
+        private Dictionary<IMyo, Color> Colors = new Dictionary<IMyo, Color>();
+        private Color[] DefaultColors = new[] {Color.Red, Color.LimeGreen};
 
         public Dictionary<Myo, Vector3F> absoluteTL = new Dictionary<Myo, Vector3F>();
 
@@ -43,7 +45,12 @@ namespace vuwall_motion {
         private void TransparentForm_Paint(object sender, PaintEventArgs e) {
             foreach (var blob in blobs.ToList())
             {
+                if (!Colors.ContainsKey(blob.Key))
+                {
+                    Colors.Add(blob.Key, DefaultColors[Colors.Count()]);
+                }
                 var transformed = new Rectangle(blob.Value.X - blob_size.Width/2, blob.Value.Y - blob_size.Height/2, blob_size.Width, blob_size.Height);
+                brush = new SolidBrush(Colors[blob.Key]);
                 e.Graphics.FillEllipse(brush, transformed);
             }
 
@@ -51,6 +58,7 @@ namespace vuwall_motion {
             {
                 foreach (var rect in rectangles.ToList())
                 {
+                    pen = new Pen(Colors[rect.Key], 5);
                     e.Graphics.DrawRectangle(pen, rect.Value);
                 }
             }
