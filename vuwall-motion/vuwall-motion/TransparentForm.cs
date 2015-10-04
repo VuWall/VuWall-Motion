@@ -13,8 +13,10 @@ namespace vuwall_motion {
         private Brush brush = new SolidBrush(Color.Red);
         private Size clientRes = Screen.PrimaryScreen.Bounds.Size;
         private Window SelectedWindow;
+        private Point? DragOffset;
 
         Vector3F absoluteTL;
+        Vector3F absoluteBR;
 
         private Size blob_size = new Size(50,50);
 
@@ -43,12 +45,13 @@ namespace vuwall_motion {
         private void TransparentForm_Paint(object sender, PaintEventArgs e) {
             foreach (var blob in blobs.ToList())
             {
-                e.Graphics.FillEllipse(brush, blob);
+                var transformed = new Rectangle(blob.X - blob.Width/2, blob.Y - blob.Height/2, blob.Width, blob.Height);
+                e.Graphics.FillEllipse(brush, transformed);
             }
 
             if (rectangles.Any())
             {
-                foreach (var rect in rectangles)
+                foreach (var rect in rectangles.ToList())
                 {
                     e.Graphics.DrawRectangle(pen, rect);
                 }
@@ -95,11 +98,31 @@ namespace vuwall_motion {
 
         public void Move(object o, GyroscopeDataEventArgs e)
         {
-            if (absoluteTL != null)
+            if (absoluteTL != null && absoluteBR != null)
             {
                 var myo = (Myo) o;
                 var position = GetPixelPosition(myo);
-                blobs[0] = new Rectangle(position, blob_size);
+
+                if (SelectedWindow != null)
+                {
+                    if (rectangles.Any())
+                    {
+                        UpdateRect(new Rectangle(position.X - DragOffset.Value.X, position.Y - DragOffset.Value.Y,
+                            SelectedWindow.Area.Width, SelectedWindow.Area.Height));
+                    }
+                    else
+                    {
+                        AddRect(new Rectangle(position.X - DragOffset.Value.X, position.Y - DragOffset.Value.Y,
+                            SelectedWindow.Area.Width, SelectedWindow.Area.Height));
+                    }
+                    if (blobs.Any())
+                    {
+                        blobs.ToList().ForEach(b => DeleteBlob(b));
+                    }
+                }
+                else {
+                    blobs[0] = new Rectangle(position, blob_size);
+                }
                 Invalidate();
             }
         }
@@ -113,16 +136,23 @@ namespace vuwall_motion {
                 {
                     absoluteTL = Math3D.FromQuaternion(myo.Orientation);
                     Console.WriteLine("Calibrated Top Left!");
+                    UpdateBlob(new Point(clientRes.Width, clientRes.Height));
+                }
+                else if (absoluteBR == null)
+                {
+                    absoluteBR = Math3D.FromQuaternion(myo.Orientation);
+                    Console.WriteLine("Calibrated Bottom Right!");
                 }
                 else
                 {
                     absoluteTL = null;
+                    absoluteBR = null;
                     UpdateBlob(new Point(0, 0));
                 }
             }
             else if (myo.Pose == MyoSharp.Poses.Pose.Fist)
             {
-                if (absoluteTL != null)
+                if (absoluteTL != null && absoluteBR != null)
                 {
                     var position = GetPixelPosition(myo);
                     var api = new WindowApi();
@@ -130,9 +160,11 @@ namespace vuwall_motion {
                     if (window != null)
                     {
                         SelectedWindow = api.GetRoot(window);
-                        if (SelectedWindow != null)
-                        {
-                            AddRect(SelectedWindow.Area);
+                        if (SelectedWindow != null) {
+                            if (DragOffset == null)
+                            {
+                                DragOffset = new Point(position.X - SelectedWindow.Area.Location.X, position.Y - SelectedWindow.Area.Location.Y);
+                            }
                         }
                     }
                 }
@@ -140,21 +172,23 @@ namespace vuwall_motion {
 
             else
             {
-                if (absoluteTL != null)
+                if (absoluteTL != null && absoluteBR != null)
                 {
                     if (SelectedWindow != null)
                     {
                         var position = GetPixelPosition(myo);
                         var api = new WindowApi();
-                        var newWindow = new Window(SelectedWindow.Ptr, new Rectangle(position.X, position.Y, SelectedWindow.Area.Width, SelectedWindow.Area.Height));
+                        var newWindow = new Window(SelectedWindow.Ptr, new Rectangle(position.X - DragOffset.Value.X, position.Y - DragOffset.Value.Y, SelectedWindow.Area.Width, SelectedWindow.Area.Height));
                         SelectedWindow = null;
                         api.SetWindow(newWindow);
                         api.BringToFront(newWindow);
+                        Rectangle blob = new Rectangle(position, blob_size);
+                        blobs.Add(blob);
                     }
-                    if (rectangles.Any())
-                    {
+                    if (rectangles.Any()) {
                         rectangles.ToList().ForEach(r => DeleteRect(r));
                     }
+                    DragOffset = null;
                 }
             }
         }
@@ -163,6 +197,7 @@ namespace vuwall_motion {
         {
             var orientation = myo.Orientation;
             var eulerAngles = Math3D.FromQuaternion(orientation) - absoluteTL;
+            eulerAngles = new Vector3F(eulerAngles.X, eulerAngles.Y, eulerAngles.Z);
             var vect = Math3D.DirectionalVector(eulerAngles);
             var position = Math3D.PixelFromVector(vect);
 
