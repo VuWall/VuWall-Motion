@@ -12,6 +12,7 @@ namespace vuwall_motion {
         private Pen pen = new Pen(Color.Red, 5);
         private Brush brush = new SolidBrush(Color.Red);
         private Size clientRes = Screen.PrimaryScreen.Bounds.Size;
+        private Window SelectedWindow;
 
         Vector3F absoluteTL;
 
@@ -123,13 +124,22 @@ namespace vuwall_motion {
                     var position = GetPixelPosition(myo);
                     var api = new WindowApi();
                     var window = api.WindowFromPoint(position);
-                    AddRect(window.Area);
+                    SelectedWindow = api.GetRoot(window);
+                    AddRect(SelectedWindow.Area);
                 }
             }
             else
             {
                 if (absoluteTL != null)
                 {
+                    if (SelectedWindow != null)
+                    {
+                        var position = GetPixelPosition(myo);
+                        var api = new WindowApi();
+                        var newWindow = new Window(SelectedWindow.Ptr, new Rectangle(position.X, position.Y, SelectedWindow.Area.Width, SelectedWindow.Area.Height));
+                        SelectedWindow = null;
+                        api.SetWindow(newWindow);
+                    }
                     if (rectangles.Any())
                     {
                         rectangles.ToList().ForEach(r => DeleteRect(r));

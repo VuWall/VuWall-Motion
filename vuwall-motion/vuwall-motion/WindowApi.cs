@@ -10,9 +10,31 @@ namespace vuwall_motion
 {
     public class WindowApi
     {
+        private IntPtr DesktopWindow { get; set; }
+        public WindowApi()
+        {
+            DesktopWindow = _GetDesktopWindow();
+        }
+
         public Window WindowFromPoint(Point p)
         {
             var ptr = _WindowFromPoint(p);
+            if (ptr == DesktopWindow)
+            {
+                return null;
+            }
+            Rectangle rect;
+            _GetWindowRect(ptr, out rect); 
+            return new Window(ptr, rect);
+        }
+
+        public Window GetRoot(Window child)
+        {
+            var ptr = _GetAncestor(child.Ptr, 2);
+            if (ptr == DesktopWindow)
+            {
+                return null;
+            }
             Rectangle rect;
             _GetWindowRect(ptr, out rect);
             return new Window(ptr, rect);
@@ -31,6 +53,10 @@ namespace vuwall_motion
         public Window GetForegroundWindow()
         {
             var ptr = _GetForegroundWindow();
+            if (ptr == DesktopWindow)
+            {
+                return null;
+            }
             Rectangle rect;
             _GetWindowRect(ptr, out rect);
             return new Window(ptr, rect);
@@ -50,5 +76,11 @@ namespace vuwall_motion
 
         [DllImport("user32.dll", EntryPoint = "GetForegroundWindow")]
         public static extern IntPtr _GetForegroundWindow();
+
+        [DllImport("user32.dll", EntryPoint = "GetAncestor")]
+        public static extern IntPtr _GetAncestor(IntPtr hWnd, uint gaFlags);
+
+        [DllImport("user32.dll", EntryPoint = "GetDesktopWindow")]
+        public static extern IntPtr _GetDesktopWindow();
     }
 }
