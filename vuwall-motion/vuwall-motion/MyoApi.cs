@@ -20,12 +20,14 @@ namespace vuwall_motion
         public static event EventHandler PoseChanged;
         public static event EventHandler GyroscopeChanged;
         public static event EventHandler PoseSequenceDetected;
+        public static event EventHandler PoseHoldDetected;
 
         public void Connect<T>(Func<T> process)
         {
             PoseChanged += (sender, args) => { };
             MyoApi.GyroscopeChanged += (sender, args) => { };
             PoseSequenceDetected += (sender, args) => { };
+            PoseHoldDetected += (sender, args) => { };
             using (var channel = Channel.Create(
                ChannelDriver.Create(ChannelBridge.Create(),
                MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create()))))
@@ -40,7 +42,7 @@ namespace vuwall_motion
                     e.Myo.Unlock(UnlockType.Hold);
 
                     // Hold Poses
-                    holdPose = HeldPose.Create(e.Myo, Pose.Fist);
+                    holdPose = (HeldPose)HeldPose.Create(e.Myo, Pose.Fist);
                     holdPose.Interval = TimeSpan.FromSeconds(0.5);
                     holdPose.Start();
 
@@ -87,13 +89,12 @@ namespace vuwall_motion
 
         private void Myo_Sequence(object sender, PoseSequenceEventArgs e)
         {
+            PoseSequenceDetected(sender, e);
             Console.WriteLine("{0} arm Myo performed a sequence of gestures!", e.Myo.Arm);
             e.Myo.Vibrate(VibrationType.Medium);
             e.Myo.Unlock(UnlockType.Timed);
             e.Myo.Unlock(UnlockType.Hold);
         }
-
-
 
         public void Myo_GyroscopeDataAcquired(object o, GyroscopeDataEventArgs e)
         {
@@ -103,9 +104,8 @@ namespace vuwall_motion
 
         private void Myo_HoldPose(object sender, PoseEventArgs e)
         {
+            PoseHoldDetected(sender, e);
             Console.WriteLine("{0} arm Myo is holding pose {1}!", e.Myo.Arm, e.Pose);
-            //e.Myo.Unlock(UnlockType.Timed);
-            //e.Myo.Unlock(UnlockType.Hold);
         }
 
         private void Myo_Unlocked(object sender, MyoEventArgs e)
