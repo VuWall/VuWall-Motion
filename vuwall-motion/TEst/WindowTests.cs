@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using NUnit.Framework;
 using vuwall_motion;
 
@@ -35,6 +36,14 @@ namespace TEst
             wa.BringToFront(window);
             var frontWindow = wa.GetForegroundWindow();
             Expect(window.Ptr, Is.EqualTo(frontWindow.Ptr));
+        }
+
+        [TestCase]
+        public void GetWindowRect()
+        {
+            var wa = new WindowApi();
+            var window = wa.WindowFromPoint(new Point(1000, 500));
+            Console.WriteLine(window.Area);
         }
     }
 }

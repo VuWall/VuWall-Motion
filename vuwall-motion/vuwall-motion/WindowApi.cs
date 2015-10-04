@@ -75,7 +75,8 @@ namespace vuwall_motion
                 return null;
             }
             Rectangle rect;
-            _GetWindowRect(ptr, out rect); 
+            _GetWindowRect(ptr, out rect);
+            _AdjustWindowRect(ref rect, 0x10000000L, true);
             return new Window(ptr, rect);
         }
 
@@ -88,6 +89,7 @@ namespace vuwall_motion
             }
             Rectangle rect;
             _GetWindowRect(ptr, out rect);
+            _AdjustWindowRect(ref rect, 0x10000000L, true);
             return new Window(ptr, rect);
         }
 
@@ -110,6 +112,7 @@ namespace vuwall_motion
             }
             Rectangle rect;
             _GetWindowRect(ptr, out rect);
+            _AdjustWindowRect(ref rect, 0x10000000L, true);
             return new Window(ptr, rect);
         }
 
@@ -146,5 +149,8 @@ namespace vuwall_motion
         [DllImport("user32.dll", EntryPoint = "EnumWindows")]
         public static extern bool _EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        [DllImport("user32.dll", EntryPoint = "AdjustWindowRect")]
+        public static extern bool _AdjustWindowRect(ref Rectangle lpRect, long dwStyle, bool bMenu);
     }
 }
