@@ -19,8 +19,8 @@ namespace vuwall_motion {
 
         private Size blob_size = new Size(50,50);
 
-        public Dictionary<Myo, Point> blobs = new Dictionary<Myo, Point>();
-        public Dictionary<Myo, Rectangle> rectangles = new Dictionary<Myo, Rectangle>();
+        public Dictionary<IMyo, Point> blobs = new Dictionary<IMyo, Point>();
+        public Dictionary<IMyo, Rectangle> rectangles = new Dictionary<IMyo, Rectangle>();
 
         public TransparentForm() {
             InitializeComponent();
@@ -56,38 +56,38 @@ namespace vuwall_motion {
             }
         }
 
-        public void AddBlob(Myo myo, Point pos)
+        public void AddBlob(IMyo myo, Point pos)
         {
             blobs.Add(myo, pos);
             Invalidate();
         }
 
-        public void AddRect(Myo myo, Rectangle rect)
+        public void AddRect(IMyo myo, Rectangle rect)
         {
             rectangles.Add(myo, rect);
             Invalidate();
         }
 
-        public void UpdateBlob(Myo myo, Point pos)
+        public void UpdateBlob(IMyo myo, Point pos)
         {
             // To have multiple blobs working with MYO, we need some sort of identifier to map which MYO device controls which blob
             blobs[myo] = pos;
             Invalidate();
         }
 
-        public void UpdateRect(Myo myo, Rectangle rect)
+        public void UpdateRect(IMyo myo, Rectangle rect)
         {
             rectangles[myo] = rect;
             Invalidate();
         }
 
-        public void DeleteBlob(Myo myo)
+        public void DeleteBlob(IMyo myo)
         {
             blobs.Remove(myo);
             Invalidate();
         }
 
-        public void DeleteRect(Myo myo)
+        public void DeleteRect(IMyo myo)
         {
             rectangles.Remove(myo);
             Invalidate();
