@@ -12,16 +12,15 @@ namespace vuwall_motion {
         private Pen pen = new Pen(Color.Red, 5);
         private Brush brush = new SolidBrush(Color.Red);
         private Size clientRes = Screen.PrimaryScreen.Bounds.Size;
-        private Window SelectedWindow;
-        private Point? DragOffset;
+        private Dictionary<Myo, Window> SelectedWindow = new Dictionary<Myo, Window>();
+        private Dictionary<Myo, Point?> DragOffset = new Dictionary<Myo, Point?>();
 
-        Vector3F absoluteTL;
-        Vector3F absoluteBR;
+        public Dictionary<Myo, Vector3F> absoluteTL = new Dictionary<Myo, Vector3F>();
 
         private Size blob_size = new Size(50,50);
 
-        public List<Rectangle> blobs = new List<Rectangle>();
-        public List<Rectangle> rectangles = new List<Rectangle>(); 
+        public Dictionary<Myo, Point> blobs = new Dictionary<Myo, Point>();
+        public Dictionary<Myo, Rectangle> rectangles = new Dictionary<Myo, Rectangle>();
 
         public TransparentForm() {
             InitializeComponent();
@@ -38,14 +37,13 @@ namespace vuwall_motion {
             wl = wl | 0x80000 | 0x20;
             TransparentWindowAPI.SetWindowLong(this.Handle, TransparentWindowAPI.GWL.ExStyle, wl);
             TransparentWindowAPI.SetLayeredWindowAttributes(this.Handle, 0, 128, TransparentWindowAPI.LWA.Alpha);
-            blobs.Add(new Rectangle(new Point(0,0), blob_size));
             Invalidate();
         }
 
         private void TransparentForm_Paint(object sender, PaintEventArgs e) {
             foreach (var blob in blobs.ToList())
             {
-                var transformed = new Rectangle(blob.X - blob.Width/2, blob.Y - blob.Height/2, blob.Width, blob.Height);
+                var transformed = new Rectangle(blob.Value.X - blob_size.Width/2, blob.Value.Y - blob_size.Height/2, blob_size.Width, blob_size.Height);
                 e.Graphics.FillEllipse(brush, transformed);
             }
 
@@ -53,75 +51,74 @@ namespace vuwall_motion {
             {
                 foreach (var rect in rectangles.ToList())
                 {
-                    e.Graphics.DrawRectangle(pen, rect);
+                    e.Graphics.DrawRectangle(pen, rect.Value);
                 }
             }
         }
 
-        public void AddBlob(Point pos)
+        public void AddBlob(Myo myo, Point pos)
         {
-            Rectangle blob = new Rectangle(pos, blob_size);
-            blobs.Add(blob);
+            blobs.Add(myo, pos);
             Invalidate();
         }
 
-        public void AddRect(Rectangle rect)
+        public void AddRect(Myo myo, Rectangle rect)
         {
-            rectangles.Add(rect);
+            rectangles.Add(myo, rect);
             Invalidate();
         }
 
-        public void UpdateBlob(Point pos)
+        public void UpdateBlob(Myo myo, Point pos)
         {
             // To have multiple blobs working with MYO, we need some sort of identifier to map which MYO device controls which blob
-            blobs[0] = new Rectangle(pos, blob_size);
+            blobs[myo] = pos;
             Invalidate();
         }
 
-        public void UpdateRect(Rectangle rect)
+        public void UpdateRect(Myo myo, Rectangle rect)
         {
-            rectangles[0] = rect;
+            rectangles[myo] = rect;
             Invalidate();
         }
 
-        public void DeleteBlob(Rectangle blob)
+        public void DeleteBlob(Myo myo)
         {
-            blobs.Remove(blob);
+            blobs.Remove(myo);
             Invalidate();
         }
 
-        public void DeleteRect(Rectangle rect)
+        public void DeleteRect(Myo myo)
         {
-            rectangles.Remove(rect);
+            rectangles.Remove(myo);
             Invalidate();
         }
 
         public void Move(object o, GyroscopeDataEventArgs e)
         {
-            if (absoluteTL != null && absoluteBR != null)
+            var myo = (Myo) o;
+            if (absoluteTL.ContainsKey(myo))
             {
-                var myo = (Myo) o;
                 var position = GetPixelPosition(myo);
 
-                if (SelectedWindow != null)
+                if (SelectedWindow.ContainsKey(myo))
                 {
-                    if (rectangles.Any())
+                    if (rectangles.ContainsKey(myo))
                     {
-                        UpdateRect(new Rectangle(position.X - DragOffset.Value.X, position.Y - DragOffset.Value.Y,
-                            SelectedWindow.Area.Width, SelectedWindow.Area.Height));
+                        UpdateRect(myo, new Rectangle(position.X - DragOffset[myo].Value.X, position.Y - DragOffset[myo].Value.Y,
+                            SelectedWindow[myo].Area.Width, SelectedWindow[myo].Area.Height));
                     }
                     else
                     {
-                        AddRect(new Rectangle(position.X - DragOffset.Value.X, position.Y - DragOffset.Value.Y,
-                            SelectedWindow.Area.Width, SelectedWindow.Area.Height));
+                        AddRect(myo, new Rectangle(position.X - DragOffset[myo].Value.X, position.Y - DragOffset[myo].Value.Y,
+                            SelectedWindow[myo].Area.Width, SelectedWindow[myo].Area.Height));
                     }
-                    if (blobs.Any())
+                    if (blobs.ContainsKey(myo))
                     {
-                        blobs.ToList().ForEach(b => DeleteBlob(b));
+                        DeleteBlob(myo);
                     }
                 }
                 else {
-                    blobs[0] = new Rectangle(position, blob_size);
+                    blobs[myo] = position;
                 }
                 Invalidate();
             }
@@ -132,38 +129,32 @@ namespace vuwall_motion {
             var myo = (Myo)o;
             if (myo.Pose == MyoSharp.Poses.Pose.DoubleTap)
             {
-                if (absoluteTL == null)
+                if (!absoluteTL.ContainsKey(myo))
                 {
-                    absoluteTL = Math3D.FromQuaternion(myo.Orientation);
+                    absoluteTL.Add(myo, Math3D.FromQuaternion(myo.Orientation));
                     Console.WriteLine("Calibrated Top Left!");
-                    UpdateBlob(new Point(clientRes.Width, clientRes.Height));
-                }
-                else if (absoluteBR == null)
-                {
-                    absoluteBR = Math3D.FromQuaternion(myo.Orientation);
-                    Console.WriteLine("Calibrated Bottom Right!");
+                    UpdateBlob(myo, new Point(clientRes.Width, clientRes.Height));
                 }
                 else
                 {
-                    absoluteTL = null;
-                    absoluteBR = null;
-                    UpdateBlob(new Point(0, 0));
+                    absoluteTL.Remove(myo);
+                    UpdateBlob(myo, new Point(0, 0));
                 }
             }
             else if (myo.Pose == MyoSharp.Poses.Pose.Fist)
             {
-                if (absoluteTL != null && absoluteBR != null)
+                if (absoluteTL.ContainsKey(myo))
                 {
                     var position = GetPixelPosition(myo);
                     var api = new WindowApi();
                     var window = api.WindowFromPoint(position);
                     if (window != null)
                     {
-                        SelectedWindow = api.GetRoot(window);
-                        if (SelectedWindow != null) {
-                            if (DragOffset == null)
+                        SelectedWindow.Add(myo, api.GetRoot(window));
+                        if (SelectedWindow.ContainsKey(myo)) {
+                            if (!DragOffset.ContainsKey(myo))
                             {
-                                DragOffset = new Point(position.X - SelectedWindow.Area.Location.X, position.Y - SelectedWindow.Area.Location.Y);
+                                DragOffset.Add(myo, new Point(position.X - SelectedWindow[myo].Area.Location.X, position.Y - SelectedWindow[myo].Area.Location.Y));
                             }
                         }
                     }
@@ -172,23 +163,22 @@ namespace vuwall_motion {
 
             else
             {
-                if (absoluteTL != null && absoluteBR != null)
+                if (absoluteTL != null)
                 {
-                    if (SelectedWindow != null)
+                    if (SelectedWindow.ContainsKey(myo))
                     {
                         var position = GetPixelPosition(myo);
                         var api = new WindowApi();
-                        var newWindow = new Window(SelectedWindow.Ptr, new Rectangle(position.X - DragOffset.Value.X, position.Y - DragOffset.Value.Y, SelectedWindow.Area.Width, SelectedWindow.Area.Height));
-                        SelectedWindow = null;
+                        var newWindow = new Window(SelectedWindow[myo].Ptr, new Rectangle(position.X - DragOffset[myo].Value.X, position.Y - DragOffset[myo].Value.Y, SelectedWindow[myo].Area.Width, SelectedWindow[myo].Area.Height));
+                        SelectedWindow.Remove(myo);
                         api.SetWindow(newWindow);
                         api.BringToFront(newWindow);
-                        Rectangle blob = new Rectangle(position, blob_size);
-                        blobs.Add(blob);
+                        blobs.Add(myo, position);
                     }
-                    if (rectangles.Any()) {
-                        rectangles.ToList().ForEach(r => DeleteRect(r));
+                    if (rectangles.ContainsKey(myo)) {
+                        DeleteRect(myo);
                     }
-                    DragOffset = null;
+                    DragOffset.Remove(myo);
                 }
             }
         }
@@ -196,7 +186,7 @@ namespace vuwall_motion {
         public Point GetPixelPosition(Myo myo)
         {
             var orientation = myo.Orientation;
-            var eulerAngles = Math3D.FromQuaternion(orientation) - absoluteTL;
+            var eulerAngles = Math3D.FromQuaternion(orientation) - absoluteTL[myo];
             eulerAngles = new Vector3F(eulerAngles.X, eulerAngles.Y, eulerAngles.Z);
             var vect = Math3D.DirectionalVector(eulerAngles);
             var position = Math3D.PixelFromVector(vect);
